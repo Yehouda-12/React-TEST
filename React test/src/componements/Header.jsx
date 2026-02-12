@@ -10,7 +10,10 @@ function Header({ setFilter }) {
 
 
   return (
+    <header>
+        <h1>Threat Actor Database</h1>
     <form className="form"  onSubmit={handleSubmit}>
+        
       <input type="text" placeholder="Search by name" onChange={(e) => setFilter(e.target.value)} />
 
 
@@ -39,6 +42,7 @@ function Header({ setFilter }) {
       <button value= 'dangerous' onClick={(e) => setFilter(e.target.value)}  >Find Most dangerous Terrorist</button>
      
     </form>
+    </header>
   );
  
 }

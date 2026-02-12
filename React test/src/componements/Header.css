@@ -15,6 +15,12 @@ form{
 input,button,select{
     border-radius: 10px;
       filter: drop-shadow(0 0 2em #646cffaa);
+      font-size: 20px;
 }
 
 
+h1{
+    margin: 0 auto;
+    justify-self: center;
+    margin-bottom: 12px ;
+}
