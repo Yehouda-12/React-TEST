@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+
+import "./App.css";
+
+import terrorists from "./terrorists_data.json";
+import Table from "./componements/Table";
+import Header from "./componements/Header";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [dataterrorists, setTerrorists] = useState(terrorists);
+  const [filter, setFilter] = useState("all");
+
+
+  const max = Math.max(...dataterrorists.map(o => o.attacksCount));
+  
+
+
+  function filteredTerrorist(dataTerrorist) {
+    if (filter === "all") return dataterrorists;
+ else if (filter ==='dangerous'){
+  return dataTerrorist.filter((ter) => ter.status === "active" &&
+                                       ter.attacksCount=== max &&
+                                      ter.imageUrl) 
+ }
+    else if (filter === "Active") {
+      return dataTerrorist.filter((ter) => ter.status === "active");
+    } else if (filter === "Quiet") {
+      return dataTerrorist.filter((ter) => ter.status === "quiet");
+    } else if (filter === "Dead") {
+      return dataTerrorist.filter((ter) => ter.status === "dead");
+    } else if (filter === "Israeli agent") {
+      return dataTerrorist.filter((ter) => ter.status === "agent");
+    }
+    return dataTerrorist.filter(
+      (ter) =>
+        ter.name.toLowerCase().includes(filter) || ter.attacksCount === +filter,
+    );
+  }
+
+  const filterTerrorist = filteredTerrorist(dataterrorists);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Header setFilter={setFilter} />
+      <main>
+        <Table dataTerrorist={filterTerrorist} />
+      </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
