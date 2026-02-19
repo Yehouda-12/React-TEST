@@ -108,3 +108,92 @@ async function saveAll(complaints) {
 
   await writeFile(filePath, headerLine + rows);
 } 
+import { readFile, writeFile } from "fs/promises";
+import path from "path";
+
+const filePath = path.resolve("data/complaints.json");
+
+/* =========================
+   READ ALL
+========================= */
+export async function getAll() {
+  try {
+    const data = await readFile(filePath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+}
+
+/* =========================
+   READ ONE BY ID
+========================= */
+export async function getById(id) {
+  const complaints = await getAll();
+  return complaints.find(c => c.id === id);
+}
+
+/* =========================
+   CREATE
+========================= */
+export async function create(category, message) {
+  const complaints = await getAll();
+
+  const newComplaint = {
+    id: Date.now().toString(),
+    category,
+    message,
+    createdAt: new Date().toISOString()
+  };
+
+  complaints.push(newComplaint);
+
+  await saveAll(complaints);
+
+  return newComplaint;
+}
+
+/* =========================
+   UPDATE
+========================= */
+export async function update(id, newData) {
+  const complaints = await getAll();
+
+  const index = complaints.findIndex(c => c.id === id);
+
+  if (index === -1) return null;
+
+  complaints[index] = {
+    ...complaints[index],
+    ...newData
+  };
+
+  await saveAll(complaints);
+
+  return complaints[index];
+}
+
+/* =========================
+   DELETE
+========================= */
+export async function remove(id) {
+  const complaints = await getAll();
+
+  const filtered = complaints.filter(c => c.id !== id);
+
+  if (filtered.length === complaints.length) return false;
+
+  await saveAll(filtered);
+
+  return true;
+}
+
+/* =========================
+   INTERNAL SAVE FUNCTION
+========================= */
+async function saveAll(complaints) {
+  await writeFile(
+    filePath,
+    JSON.stringify(complaints, null, 2)
+  );
+}
